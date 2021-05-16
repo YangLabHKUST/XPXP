@@ -75,6 +75,7 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 
 Input files:
 --geno genotype file of testing data (UKBB Chinese, $n$=1,439), plink1 version
+
 --beta the estimated SNPs effect size returned by XPXP
 ```bash
 $ python [INSTALL PATH]/XPXP/src/Predict.py \
