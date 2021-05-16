@@ -1,6 +1,13 @@
 # XPXP
 The XPXP package for improving polygenic risk score (PRS) prediction by cross-population and cross-phenotype analysis
 
+# Installation
+'''bash
+git clone https://github.com/JiaShun-Xiao/XPXP.git
+conda create --name xpxp --file requirements.txt
+conda activate xpxp
+```
+
 # Quick start
 
 We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels.
