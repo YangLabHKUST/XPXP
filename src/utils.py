@@ -9,6 +9,8 @@ from scipy import linalg
 import os
 import scipy.stats as st
 import tempfile
+import seaborn as sns
+import matplotlib.pyplot as plt
 import glob as gb
 
 
