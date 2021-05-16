@@ -74,8 +74,8 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 ## Evaluate the prediction performance using individual-level GWAS data
 
 Input files:
---geno genotype file of testing data (UKBB Chinese, $n$=1,439), plink1 version
 
+--geno genotype file of testing data (UKBB Chinese, $n$=1,439), plink1 version
 --beta the estimated SNPs effect size returned by XPXP
 ```bash
 $ python [INSTALL PATH]/XPXP/src/Predict.py \
@@ -95,13 +95,14 @@ However, the individual-level GWAS data of UKBB is availabel due to the data sha
 
 ## Evaluate the prediction performance using GWAS summary statistics
 
-We follow XPASS[!https://github.com/YangLabHKUST/XPASS] to use the following equation:
+We follow [XPASS](!https://github.com/YangLabHKUST/XPASS) to use the following equation:
 
 <img src="https://latex.codecogs.com/svg.image?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," />
 
 where z is the z-score of external summsry statistics, n is its sample size, <img src="https://latex.codecogs.com/svg.image?\tilde{\mu}" title="\tilde{\mu}" /> is the posterior mean of effect size at the standardized genotype scale, <img src="https://latex.codecogs.com/svg.image?\Sigma" title="\Sigma" /> is the SNPs correlation matrix.
 
 Input files:
+
 --sumst_file GWAS summary statistics of UKBB Chinese height
 --beta the estimated SNPs effect size returned by XPXP
 --col_name specify the column name of SNPs effect size file
