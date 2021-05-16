@@ -77,6 +77,7 @@ Input files:
 
 - --geno genotype file of testing data (UKBB Chinese, $n$=1,439), plink1 version
 - --beta the estimated SNPs effect size returned by XPXP
+
 ```bash
 $ python [INSTALL PATH]/XPXP/src/Predict.py \
 --save ./XPXP_demo_NotAvailable/predict_ukb_chn \
@@ -106,6 +107,7 @@ Input files:
 - --sumst_file GWAS summary statistics of UKBB Chinese height
 - --beta the estimated SNPs effect size returned by XPXP
 - --col_name specify the column name of SNPs effect size file
+
 ```bash
 $ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 --ref_file ./XPXP_demo/1000G.EAS.QC.hm3.ind \
