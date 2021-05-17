@@ -24,6 +24,7 @@ if __name__ == '__main__':
     df_pm = pd.read_csv(args.beta,sep='\t')
 
     snp_common = np.intersect1d(df_pm['SNP'].values,df_gwas['SNP'].values)
+    print('Overlapping SNPs number: {}'.format(snp_common.shape[0]))
     df_gwas = df_gwas.loc[df_gwas['SNP'].isin(snp_common)]
     df_gwas = df_gwas.reset_index()
     df_pm = df_pm.loc[df_pm['SNP'].isin(snp_common)]

@@ -78,6 +78,28 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 1       rs9442372       1018704 A       G       0.001354169642801807    0.0007882917460030307   0.0009947411386104607
 ```
 
+where "<TraitName>-muxpxp" is the posterior means of SNPs effect size of <TraitName> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("<TraitName>-mu") using only the GWAS summary statistic of <TraitName>. A1 is the effect allele, A2 is the other allele.
+
+```bash
+$ python [INSTALL PATH]/XPXP/src/XPXP.py \
+--num_threads 40 \
+--save ./XPXP_demo/PM_height_BBJ-GIANT-UKB_AddLDpredinf.csv \
+--gc_file ./XPXP_demo/gcov_height_BBJ.csv \
+--sumst_files ./XPXP_demo/height_BBJ_summary_hm3.txt,./XPXP_demo/height_GIANT_summary_hm3.txt,./XPXP_demo/height_UKB_summary_hm3.txt \
+--sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \
+--ld_block_file ./XPXP_demo/EAS_fourier_ls-all.bed \
+--ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \
+--fix_effect_traits height_BBJ-EAS \
+--return_LDpredinf
+
+$ head ./XPXP_demo/PM_height_BBJ-GIANT-UKB_AddLDpredinf.csv
+chr     SNP     bp      A1      A2      height_BBJ-EAS-mu       height_BBJ-EAS-muxpxp   height_Wood-EUR-mu      height_Wood-EUR-muxpxp  height_UKB-EUR-mu       height_UKB-EUR-muxpxp
+1       rs3934834       1005806 T       C       0.0005643129160874588   0.001490031305500368    -6.687588995674362e-05  0.0008587749623481179   0.001128698464435024    0.001348694388142856
+1       rs3766191       1017587 T       C       0.0005275501273343171   0.001294311742987717    -9.677694792123072e-05  0.0007056128453579005   0.0010440824756778855   0.0011593703907873875
+1       rs9442372       1018704 A       G       0.0005044304401368068   0.001354169642801807    0.00018283924802650126  0.0007882917460030307   0.0006365824088935744   0.0009947411386104607
+```
+
+
 ## Evaluate the prediction performance using individual-level GWAS data
 
 Input files:
@@ -99,6 +121,8 @@ FID     IID     height_BBJ-EAS-muxpxp   height_Wood-EUR-muxpxp  height_UKB-EUR-m
 1006646 1006646 -0.57514        -0.7420140000000001     -0.48337600000000003
 1006809 1006809 -0.772656       -0.966025       -0.8342870000000001
 ```
+where column <TraitName-muxpxp> is the predicted PRS using the estimated SNPs effect size (<TraitName-muxpxp>) returned by XPXP
+
 However, the individual-level GWAS data of UKBB is availabel due to the data sharing restriction. We therefore show how to use the height GWAS of UKBB Chinese as validation dataset
 
 ## Evaluate the prediction performance using GWAS summary statistics
@@ -142,7 +166,7 @@ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 --ref_file ./XPXP_demo/1000G.EAS.QC.hm3.ind \
 --sumst_file ./XPXP_demo/UKB_Chinese_height_GWAS_summary.txt \
 --beta ./XPXP_demo/PM_height_BBJ-UKB.csv  \
---trait height_BBJ-EAS-muxpxp
+--col_name height_BBJ-EAS-muxpxp
 
 Output: R2 for height_BBJ-EAS-muxpxp: 0.1256874019449264
 ```
