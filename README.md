@@ -10,7 +10,7 @@ conda activate xpxp
 
 # Quick start
 
-We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. The datasets involved in the following example is availabel from [here](!https://www.dropbox.com/s/mirlt5fvr3zkxw4/XPXP_demo.tar.gz?dl=0)
+We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. The datasets involved in the following example is availabel from [here](https://www.dropbox.com/s/mirlt5fvr3zkxw4/XPXP_demo.tar.gz?dl=0)
 
 ## Data preparation
 
@@ -127,7 +127,7 @@ However, the individual-level GWAS data of UKBB is availabel due to the data sha
 
 ## Evaluate the prediction performance using GWAS summary statistics
 
-We follow [XPASS](!https://github.com/YangLabHKUST/XPASS) to use the following equation:
+We follow [XPASS](https://github.com/YangLabHKUST/XPASS) to use the following equation:
 
 <img src="https://latex.codecogs.com/svg.image?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," />
 
