@@ -78,7 +78,7 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 1       rs9442372       1018704 A       G       0.001354169642801807    0.0007882917460030307   0.0009947411386104607
 ```
 
-where "<TraitName>-muxpxp" is the posterior means of SNPs effect size of <TraitName> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("<TraitName>-mu") using only the GWAS summary statistic of <TraitName>. A1 is the effect allele, A2 is the other allele.
+where "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of <TraitName> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("<TraitName>-mu") using only the GWAS summary statistic of <TraitName>. A1 is the effect allele, A2 is the other allele.
 
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
