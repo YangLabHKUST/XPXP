@@ -8,7 +8,7 @@ from utils import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='estimate parameters using GWAS summary')
-    parser.add_argument('--save', type=str, help='output path', require=True)
+    parser.add_argument('--save', type=str, help='output path', required=True)
     parser.add_argument('--sumst_files', type=str, \
         help='summary statisitc files, separated by comma',required=True)
     parser.add_argument('--sumst_names', type=str, \
@@ -20,7 +20,7 @@ if __name__ == '__main__':
         help='LD reference covariate files path, seperated by comma.',\
         default='/home/share/UKB/1kg_ref/1000G.EAS.QC.hm3.ind.pc5.txt,/home/share/UKB/1kg_ref/1000G.EUR.QC.hm3.ind.pc20.txt')
     parser.add_argument('--ldsc_files', type=str, \
-        help='LDscore files path, seperated by comma.',\
+        help='LDscore files path, seperated by comma.', \
         default='/home/share/xiaojs/database/1kg_EAS_ldsc/eas_ldscores/,/home/share/xiaojs/database/1kg_EUR/eur_w_ld_chr/')    
     parser.add_argument('--ld_block_file', type=str, \
         help='ld block file path',default='/home/share/xiaojs/database/prs/EAS_fourier_ls-all.bed')
