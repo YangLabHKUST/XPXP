@@ -10,7 +10,7 @@ conda activate xpxp
 
 # Quick start
 
-We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels.
+We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. The datasets involved in the following example is availabel from [here](!https://www.dropbox.com/s/mirlt5fvr3zkxw4/XPXP_demo.tar.gz?dl=0)
 
 ## Data preparation
 
@@ -78,7 +78,7 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 1       rs9442372       1018704 A       G       0.001354169642801807    0.0007882917460030307   0.0009947411386104607
 ```
 
-where "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of <TraitName> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("<TraitName>-mu") using only the GWAS summary statistic of <TraitName>. A1 is the effect allele, A2 is the other allele.
+where "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of \<TraitName\> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("\<TraitName\>-mu") using only the GWAS summary statistic of \<TraitName\>. A1 is the effect allele, A2 is the other allele.
 
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
@@ -121,7 +121,7 @@ FID     IID     height_BBJ-EAS-muxpxp   height_Wood-EUR-muxpxp  height_UKB-EUR-m
 1006646 1006646 -0.57514        -0.7420140000000001     -0.48337600000000003
 1006809 1006809 -0.772656       -0.966025       -0.8342870000000001
 ```
-where column <TraitName-muxpxp> is the predicted PRS using the estimated SNPs effect size (<TraitName-muxpxp>) returned by XPXP
+where column \<TraitName-muxpxp\> is the predicted PRS using the estimated SNPs effect size (\<TraitName-muxpxp\>) returned by XPXP
 
 However, the individual-level GWAS data of UKBB is availabel due to the data sharing restriction. We therefore show how to use the height GWAS of UKBB Chinese as validation dataset
 
