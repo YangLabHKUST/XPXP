@@ -8,63 +8,83 @@ from utils import *
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='estimate parameters using GWAS summary')
-    parser.add_argument('--save', type=str, help='output path', required=True)
+    parser.add_argument('--save_dir', type=str, help='output path', required=True)
+    parser.add_argument('--ldsc_path', type=str, help='LDSC path', required=True)
+    parser.add_argument('--ldsc_files', type=str, \
+        help='LDscore files path, seperated by comma.',required=True)    
+    parser.add_argument('--merge_alleles', type=str, help='file used for matching alleles', required=True)
     parser.add_argument('--sumst_files', type=str, \
         help='summary statisitc files, separated by comma',required=True)
     parser.add_argument('--sumst_names', type=str, \
-        help='summary statisitc names, separated by comma, corresponding to the --sumst_files, different populations are separated by "+", .e.g. Target+Auxiliary',required=True)
+        help='summary statisitc names, separated by comma, the order is corresponds to the --sumst_files, different populations are separated by "+", .e.g. Target+Auxiliary',required=True)
     parser.add_argument('--ref_files', type=str, \
-        help='LD reference files path, plink1 file version, seperated by comma.',\
-        default='/home/share/UKB/1kg_ref/1000G.EAS.QC.hm3.ind,/home/share/UKB/1kg_ref/1000G.EUR.QC.hm3.ind')
+        help='LD reference files path, plink1 file version, seperated by comma.',required=True)
     parser.add_argument('--covar_files', type=str, \
-        help='LD reference covariate files path, seperated by comma.',\
-        default='/home/share/UKB/1kg_ref/1000G.EAS.QC.hm3.ind.pc5.txt,/home/share/UKB/1kg_ref/1000G.EUR.QC.hm3.ind.pc20.txt')
-    parser.add_argument('--ldsc_files', type=str, \
-        help='LDscore files path, seperated by comma.', \
-        default='/home/share/xiaojs/database/1kg_EAS_ldsc/eas_ldscores/,/home/share/xiaojs/database/1kg_EUR/eur_w_ld_chr/')    
-    parser.add_argument('--ld_block_file', type=str, \
-        help='ld block file path',default='/home/share/xiaojs/database/prs/EAS_fourier_ls-all.bed')
+        help='LD reference covariate files path, seperated by comma.',required=True)
+    parser.add_argument('--ld_block_file', type=str,required=True)
     parser.add_argument('--num_threads', type=str, help='number of threads', default="22")
 
     args = parser.parse_args()
 
     BBJ_include_pheno = args.sumst_names.split('+')[0].split(',')
     UKB_include_pheno = args.sumst_names.split('+')[1].split(',')
-    f_eas = args.sumst_files.split(',')[:len(BBJ_include_pheno)]
-    f_eur = args.sumst_files.split(',')[len(BBJ_include_pheno):]
-    genetic_corr_path = args.save
 
+    f_eas = args.sumst_files.split(',')[:len(BBJ_include_pheno)]
+    f_eas_ldsc = []
+    f_eur = args.sumst_files.split(',')[len(BBJ_include_pheno):]
+    f_eur_ldsc = []
+
+    # mounge SNPs
+    ldsc_munge_com = 'conda run -n ldsc python {}/munge_sumstats.py \
+        --chunksize 500000 \
+        --merge-alleles {} \
+        --sumstats {} \
+        --out {}'
+    for f in f_eas:
+        f_eas_tmp = os.path.splitext(f)[0]
+        f_eas_ldsc.append(f_eas_tmp+'.sumstats.gz')
+        #os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eas_tmp))
+    for f in f_eur:
+        f_eur_tmp = os.path.splitext(f)[0]
+        f_eur_ldsc.append(f_eur_tmp+'.sumstats.gz')
+        #os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eur_tmp))
+
+
+    genetic_corr_path = args.save_dir
+    
+    # Parameters: Trans
     if not os.path.exists(genetic_corr_path):
         os.mkdir(genetic_corr_path)
     if not os.path.exists(genetic_corr_path+'/trans'):
         os.mkdir(genetic_corr_path+'/trans')
-    com = 'python TransGC.py --save {}/trans/{}-{} --sumst_files {},{}'
+    com = 'python {}/TransGC.py --save {}/trans/{}-{} --sumst_files {},{} --ref_files {} --covar_files {} --ld_block_file {}'
     coms = []
     for i,peas in enumerate(BBJ_include_pheno):
         for j,peur in enumerate(UKB_include_pheno):
-            os.system(com.format(genetic_corr_path,peas,peur,f_eas[i],f_eur[j]))
-
-    ldsc_com_heri = 'conda run -n ldsc python /home/share/xiaojs/software/ldsc/ldsc.py --h2 {0} --ref-ld-chr {1} --w-ld-chr {1} --out {2}'
-    ldsc_com_rg = 'conda run -n ldsc python /home/share/xiaojs/software/ldsc/ldsc.py --rg {0} --ref-ld-chr {1} --w-ld-chr {1} --out {2}'
+            os.system(com.format(os.path.dirname(os.path.realpath(__file__)),genetic_corr_path,peas,peur,f_eas[i],f_eur[j],args.ref_files,args.covar_files,args.ld_block_file))
+    
+    # Parameters: Target
+    ldsc_com_heri = 'conda run -n ldsc python {0}/ldsc.py --h2 {1} --ref-ld-chr {2} --w-ld-chr {2} --out {3}'
+    ldsc_com_rg = 'conda run -n ldsc python {0}/ldsc.py --rg {1} --ref-ld-chr {2} --w-ld-chr {2} --out {3}'
     if not os.path.exists(genetic_corr_path+'/target'):
         os.mkdir(genetic_corr_path+'/target')
     for i,peas in enumerate(BBJ_include_pheno):
-        os.system(ldsc_com_heri.format(f_eas[i],args.ldsc_files.split(',')[0],genetic_corr_path+'/target/'+peas))
-    
+        os.system(ldsc_com_heri.format(args.ldsc_path,f_eas_ldsc[i],args.ldsc_files.split(',')[0],genetic_corr_path+'/target/'+peas))    
     for i,peas in enumerate(BBJ_include_pheno):
         for j,peur in enumerate(BBJ_include_pheno[(i+1):]):
-            os.system(ldsc_com_rg.format(f_eas[i]+','+f_eas[j+i+1],args.ldsc_files.split(',')[0],genetic_corr_path+'/target/'+peas+'-'+peur))
+            os.system(ldsc_com_rg.format(args.ldsc_path,f_eas_ldsc[i]+','+f_eas_ldsc[j+i+1],args.ldsc_files.split(',')[0],genetic_corr_path+'/target/'+peas+'-'+peur))
 
+    # Parameters: Auxiliary
     if not os.path.exists(genetic_corr_path+'/auxiliary'):
         os.mkdir(genetic_corr_path+'/auxiliary')
     for i,peas in enumerate(UKB_include_pheno):
-        os.system(ldsc_com_heri.format(f_eur[i],args.ldsc_files.split(',')[1],genetic_corr_path+'/auxiliary/'+peas))
+        os.system(ldsc_com_heri.format(args.ldsc_path,f_eur_ldsc[i],args.ldsc_files.split(',')[1],genetic_corr_path+'/auxiliary/'+peas))
     
     for i,peas in enumerate(UKB_include_pheno):
         for j,peur in enumerate(UKB_include_pheno[(i+1):]):
-            os.system(ldsc_com_rg.format(f_eur[i]+','+f_eur[j+i+1],args.ldsc_files.split(',')[1],genetic_corr_path+'/auxiliary/'+peas+'-'+peur))
+            os.system(ldsc_com_rg.format(args.ldsc_path,f_eur_ldsc[i]+','+f_eur_ldsc[j+i+1],args.ldsc_files.split(',')[1],genetic_corr_path+'/auxiliary/'+peas+'-'+peur))
 
-    
+
     # Organize result: heri
     eas_heri = np.zeros(len(BBJ_include_pheno))
     eur_heri = np.zeros(len(UKB_include_pheno))
@@ -99,9 +119,7 @@ if __name__ == '__main__':
                 if 'gencov:' in line:
                     eas_eas_cov[i,i+1+j] = float(line.split()[-2])
                     break
-            tmp_corr = eas_eas_cov[i,i+1+j]/(eas_heri[i]*eas_heri[i+1+j])**.5
-            eas_eas_cov_e[i,i+1+j] = (float(open(fc).readlines()[ln+2].split()[-2])-\
-                                    tmp_corr)*((1-eas_heri[i])*(1-eas_heri[i+1+j]))**.5
+            eas_eas_cov_e[i,i+1+j] = float(open(fc).readlines()[ln+2].split()[-2])-eas_eas_cov[i,i+1+j]
     eas_eas_cov = eas_eas_cov+eas_eas_cov.T-np.diag(np.diag(eas_eas_cov))
     eas_eas_cov_e = eas_eas_cov_e+eas_eas_cov_e.T-np.diag(np.diag(eas_eas_cov_e))
     eas_eas_cov_df = pd.DataFrame(eas_eas_cov,index=BBJ_include_pheno,columns=BBJ_include_pheno)
@@ -119,12 +137,7 @@ if __name__ == '__main__':
                 if 'gencov:' in line:
                     eur_eur_cov[i,i+1+j] = float(line.split()[-2])
                     break
-            for line in open(fc).readlines():
-                if 'Genetic Correlation:' in line:
-                    tmp_corr = float(line.split()[-2])
-                    break
-            eur_eur_cov_e[i,i+1+j] = (float(open(fc).readlines()[ln+2].split()[-2])-\
-                                    tmp_corr)/((1-eur_heri[i])*(1-eur_heri[i+1+j]))**.5
+            eur_eur_cov_e[i,i+1+j] = float(open(fc).readlines()[ln+2].split()[-2])-eur_eur_cov[i,i+1+j]
     eur_eur_cov = eur_eur_cov+eur_eur_cov.T-np.diag(np.diag(eur_eur_cov))
     eur_eur_cov_e = eur_eur_cov_e+eur_eur_cov_e.T-np.diag(np.diag(eur_eur_cov_e))
     eur_eur_cov_df = pd.DataFrame(eur_eur_cov,index=UKB_include_pheno,columns=UKB_include_pheno)
@@ -133,6 +146,7 @@ if __name__ == '__main__':
     cov_df = pd.concat((pd.concat((eas_eas_cov_df,eas_eur_cov_df),axis=1),pd.concat((eas_eur_cov_df.T,eur_eur_cov_df),axis=1)),axis=0)
     cov_e_df = pd.concat((pd.concat((eas_eas_cov_e_df,eas_eur_cov_e_df),axis=1),pd.concat((eas_eur_cov_e_df.T,eur_eur_cov_e_df),axis=1)),axis=0)
 
+    # guarantee the positive definiteness of covariance matrix
     for c1 in BBJ_include_pheno+UKB_include_pheno:
         for c2 in BBJ_include_pheno+UKB_include_pheno:
             if c1==c2:

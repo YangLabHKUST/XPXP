@@ -9,6 +9,7 @@ from scipy import linalg
 import os
 import scipy.stats as st
 import tempfile
+import copy
 import seaborn as sns
 import matplotlib.pyplot as plt
 import glob as gb
@@ -213,7 +214,7 @@ def ComputePMXPXP(bi, sums_names, sumst_ref1, ns, p, L, L2, Sigma_beta, Sigma_e,
     
     mu_xpss, status = cg(A,zb,maxiter=1000)
     if status != 0:
-        logger.warn("Does not converge at {} block, info: {}, SNPs num: {}. Swich to matrix inverse version (note: check the positive definiteness of SigmaBeta and SigamE; check the allele frequency of reference panel)".format(bi, status, pb))
+        logger.warn("Does not converge at {} block, info: {}, SNPs num: {}. Swich to matrix inverse version (note: check the positive definiteness of SigmaBeta and SigamE; remove SNPs with MAF=0 in reference panels)".format(bi, status, pb))
         #print("Does not converge at {} block, info: {}, SNPs num: {}. Swich to matrix inverse version".format(bi, status, pb))
         mu_xpss = np.linalg.inv(A).dot(zb)
             

@@ -10,9 +10,8 @@ from utils import *
 if __name__ == '__main__': 
     parser = argparse.ArgumentParser(description='impute Z scores for untyped SNPs')
     parser.add_argument('--sumst_file', type=str, help='summary statisitc file',required=True)
-    parser.add_argument('--use_snp', type=str, help='SNPs need to be imputed') # default='/import/home/share/xiaojs/cross-trait/sums-stats/used_SNPs_3M.txt'
-    parser.add_argument('--ref_file', type=str, help='LD reference files path, plink1 file version',\
-        default='/home/share/mingxuan/wegene_cmdb_bbj/height_affy_ldpred_ref_2000')
+    parser.add_argument('--use_snp', type=str, help='SNPs need to be imputed')  
+    parser.add_argument('--ref_file', type=str, help='LD reference files path, plink1 file version',required=True)
     parser.add_argument('--ld_block_file', type=str, help='ld block file path',\
         default='/home/jxiaoae/database/EAS_fourier_ls-all.bed')
     parser.add_argument('--snp', type=str, help='Name of SNP column', default='SNP')

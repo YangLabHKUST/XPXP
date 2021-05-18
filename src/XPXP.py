@@ -20,10 +20,8 @@ if __name__ == '__main__':
     parser.add_argument('--sumst_files', type=str, help='summary statisitc files, separated by comma, ordered by population: Target+Auxiliary',required=True)
     parser.add_argument('--sumst_names', type=str, help='summary statisitc names, separated by comma, the order corresponds to the summary statisitc files, different populations are separated by "+"',required=True)
     parser.add_argument('--use_snps', type=str, help='use assigned SNPs, skip SNPs matching step',required=False)
-    parser.add_argument('--ref_files', type=str, help='LD reference files path, plink1 file version, seperated by comma.',\
-        default='/import/home/share/UKB/ld_ref_2k/height_affy_ldpred_ref_2000_noMHC,/import/home/share/UKB/ld_ref_2k/height_ukb_ldpred_ref_2000_noMHC')
-    parser.add_argument('--ld_block_file', type=str, help='ld block file path',\
-        default='/home/share/xiaojs/database/prs/EUR_fourier_ls-all.bed') # EUR_fourier_ls-all.bed 
+    parser.add_argument('--ref_files', type=str, help='LD reference files path, plink1 file version, seperated by comma.',required=False)
+    parser.add_argument('--ld_block_file', type=str, help='ld block file path',required=False)
     parser.add_argument('--return_LDpredinf', help='return LDpredinf for each traits', action="store_true")
     parser.add_argument('--num_threads', type=str, help='number of threads', default="22")
     parser.add_argument('--fix_effect_traits', type=str, help='traits to incorporate fix large genetic effect, seperated by comma',required=False)
@@ -89,7 +87,7 @@ if __name__ == '__main__':
     sumstats_dict = {}
     for i,sumsf in enumerate(sumst_files):
         try:
-            tmp_df = pd.read_csv(sumsf,sep='\t',compression='gzip')  
+            tmp_df = pd.read_csv(sumsf,sep='\t',compression='infer')  
         except:
             tmp_df = pd.read_csv(sumsf,sep='\t')    
         sumstats_dict[sumst_names[i]] = tmp_df.drop_duplicates('SNP') 

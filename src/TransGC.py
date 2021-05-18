@@ -13,12 +13,10 @@ if __name__ == '__main__':
     parser.add_argument('--sumst_files', type=str, help='summary statisitc files, seperated by comma')
     parser.add_argument('--use_snps', type=str, help='use assigned SNPs, skip SNPs matching step')
     parser.add_argument('--ref_files', type=str,\
-        help='LD reference files path, plink1 file version, seperated by comma.',\
-        default='/home/share/UKB/1kg_ref/1000G.EAS.QC.hm3.ind,/home/share/UKB/1kg_ref/1000G.EUR.QC.hm3.ind')
+        help='LD reference files path, plink1 file version, seperated by comma.')
     parser.add_argument('--covar_files', type=str,\
-        help='LD reference covariate files path, seperated by comma.',\
-        default='/home/share/UKB/1kg_ref/1000G.EAS.QC.hm3.ind.pc5.txt,/home/share/UKB/1kg_ref/1000G.EUR.QC.hm3.ind.pc20.txt')
-    parser.add_argument('--ld_block_file', type=str, help='ld block file path',default='/home/share/xiaojs/database/prs/EUR_fourier_ls-all.bed')
+        help='LD reference covariate files path, seperated by comma.')
+    parser.add_argument('--ld_block_file', type=str, help='ld block file path')
     parser.add_argument('--num_threads', type=str, help='number of threads', default="22")
 
 
@@ -114,7 +112,7 @@ if __name__ == '__main__':
     zf2 = zf2.reset_index()
 
     # based on the minor allel of reference panel, correct for the z score in summary statistics
-    logger.info('Based on the minor allel of ref1 panel, correct for the z score...')
+    logger.info('Based on the minor allel of ref1 panel, correcting the sign of Zscore...')
     logger.info("Z score inner product before correction: {}".format(zf1['Z'].values@zf2['Z'].values/zf1.shape[0]))
     ind1 = (ref1_info['A1'].values != zf1['A1'].values)
     ind2 = (ref1_info['A1'].values != zf2['A1'].values)
