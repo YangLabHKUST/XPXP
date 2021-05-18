@@ -43,11 +43,11 @@ if __name__ == '__main__':
     for f in f_eas:
         f_eas_tmp = os.path.splitext(f)[0]
         f_eas_ldsc.append(f_eas_tmp+'.sumstats.gz')
-        #os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eas_tmp))
+        os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eas_tmp))
     for f in f_eur:
         f_eur_tmp = os.path.splitext(f)[0]
         f_eur_ldsc.append(f_eur_tmp+'.sumstats.gz')
-        #os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eur_tmp))
+        os.system(ldsc_munge_com.format(args.ldsc_path,args.merge_alleles,f,f_eur_tmp))
 
 
     genetic_corr_path = args.save_dir
