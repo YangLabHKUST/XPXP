@@ -16,7 +16,7 @@ python ./src/ParaEstimate.py -h
 
 # Quick start
 
-We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. The datasets involved in the following example is availabel from [here](https://www.dropbox.com/s/mirlt5fvr3zkxw4/XPXP_demo.tar.gz?dl=0)
+We illustrate the usage of XPXP using the GWAS summary statistics of height from BBJ, UKBB European and GIANT cohorts. For demonstration, we use the easily accessible 1000 Genomes project genotypes as reference panels. The datasets involved in the following example is availabel from [here](https://www.dropbox.com/s/b7g1438pl78c9q9/XPXP_demo.tar.gz?dl=0)
 
 ## Data preparation
 
