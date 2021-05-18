@@ -17,8 +17,8 @@ if __name__ == '__main__':
     parser.add_argument('--save', type=str, help='output path',required=True)
     parser.add_argument('--gc_file', type=str, help='genetic covariance file path',required=True)
     parser.add_argument('--ec_file', type=str, help='environment covariance file path',required=False)
-    parser.add_argument('--sumst_files', type=str, help='summary statisitc files, separated by comma, ordered by population',required=True)
-    parser.add_argument('--sumst_names', type=str, help='summary statisitc names, separated by comma, corresponding with sumst_files, different population are separated by "+"',required=True)
+    parser.add_argument('--sumst_files', type=str, help='summary statisitc files, separated by comma, ordered by population: Target+Auxiliary',required=True)
+    parser.add_argument('--sumst_names', type=str, help='summary statisitc names, separated by comma, the order corresponds to the summary statisitc files, different populations are separated by "+"',required=True)
     parser.add_argument('--use_snps', type=str, help='use assigned SNPs, skip SNPs matching step',required=False)
     parser.add_argument('--ref_files', type=str, help='LD reference files path, plink1 file version, seperated by comma.',\
         default='/import/home/share/UKB/ld_ref_2k/height_affy_ldpred_ref_2000_noMHC,/import/home/share/UKB/ld_ref_2k/height_ukb_ldpred_ref_2000_noMHC')
@@ -26,7 +26,7 @@ if __name__ == '__main__':
         default='/home/share/xiaojs/database/prs/EUR_fourier_ls-all.bed') # EUR_fourier_ls-all.bed 
     parser.add_argument('--return_LDpredinf', help='return LDpredinf for each traits', action="store_true")
     parser.add_argument('--num_threads', type=str, help='number of threads', default="22")
-    parser.add_argument('--fix_effect_traits', type=str, help='traits to estimate fix large genetic effect, seperated by comma',required=False)
+    parser.add_argument('--fix_effect_traits', type=str, help='traits to incorporate fix large genetic effect, seperated by comma',required=False)
     parser.add_argument('--pvalue', type=float, help='p-value threshold for fix effect', default=1e-6)
 
 

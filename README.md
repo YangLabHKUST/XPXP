@@ -16,13 +16,13 @@ We illustrate the usage of XPXP using the GWAS summary statistics of height from
 
 Input files of XPXP include:
 
-- summay statistics files of the target population
-- summay statistics files of the auxiliary population
-- reference panel of the target population in plink 1 format
-- reference panel of the auxiliary population in plink 1 format
+- summay statistics files of the target and auxiliary population
+- summay statistics names of the target and auxiliary population, population is separated by '+'
+- reference panel of the target and auxiliary population in plink 1 format
 - genetic covariance file
 - environmental covariance file if sample overlap exist
 - LD blocks file
+- summay statistics names for incorporating population-specific of phenotype specific large genetic effects
 
 The XPXP format GWAS summary statistics file has at least 5 fields:
 
@@ -55,18 +55,18 @@ height_UKB-EUR,0.20741027144622678,0.2525,0.369
 
 ## Run XPXP to compute SNPs effect size
 
-Once the imput files are formatted, XPXP will automatically process the datasets, including SNPs overlapping and allele matching.
+Once the input files are formatted, XPXP will automatically process the datasets, including SNPs overlapping and allele matching.
 Run XPXP with the following comand:
 ```bash
 python [INSTALL PATH]/XPXP/src/XPXP.py \
 --num_threads 40 \
---save ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv \
---gc_file ./XPXP_demo/gcov_height_BBJ.csv \
---sumst_files ./XPXP_demo/height_BBJ_summary_hm3.txt,./XPXP_demo/height_GIANT_summary_hm3.txt,./XPXP_demo/height_UKB_summary_hm3.txt \
---sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \
+--save ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv \ # output file path 
+--gc_file ./XPXP_demo/gcov_height_BBJ.csv \ # genetic covariance file
+--sumst_files ./XPXP_demo/height_BBJ_summary_hm3.txt,./XPXP_demo/height_GIANT_summary_hm3.txt,./XPXP_demo/height_UKB_summary_hm3.txt \ # summary statistics files, Target+Auxiliary 
+--sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \ # summary statistics names, the order corresponds to the file
 --ld_block_file ./XPXP_demo/EAS_fourier_ls-all.bed \
---ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \
---fix_effect_traits height_BBJ-EAS
+--ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \ # reference panels, Target+Auxiliary
+--fix_effect_traits height_BBJ-EAS # traits to incorporate fix large genetic effect
 ```
 
 XPXP returns the estimated SNPs effect size in ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv
@@ -78,7 +78,7 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 1       rs9442372       1018704 A       G       0.001354169642801807    0.0007882917460030307   0.0009947411386104607
 ```
 
-where "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of \<TraitName\> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("\<TraitName\>-mu") using only the GWAS summary statistic of \<TraitName\>. A1 is the effect allele, A2 is the other allele.
+where A1 is the effect allele, A2 is the other allele. "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of \<TraitName\> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("\<TraitName\>-mu") using only the GWAS summary statistic of \<TraitName\>, see the exmaple below. 
 
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
@@ -109,7 +109,7 @@ Input files:
 
 ```bash
 $ python [INSTALL PATH]/XPXP/src/Predict.py \
---save ./XPXP_demo_NotAvailable/predict_ukb_chn \
+--save ./XPXP_demo_NotAvailable/predict_ukb_chn.csv \
 --geno ./XPXP_demo_NotAvailable/ukb_chn_qc1 \
 --beta ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv 
 ```
@@ -171,10 +171,14 @@ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 Output: R2 for height_BBJ-EAS-muxpxp: 0.1256874019449264
 ```
 
+## Generate genetic and environmental covariance matrix
+
+
+
 
 # Development
 
-The XPASS package is developed by Jiashun Xiao (jxiaoae@connect.ust.hk).
+The XPXP package is developed by Jiashun Xiao (jxiaoae@connect.ust.hk).
 
 # Contact information
 
