@@ -66,7 +66,7 @@ python [INSTALL PATH]/XPXP/src/XPXP.py \
 --sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \ # summary statistics names, the order corresponds to the file
 --ld_block_file ./XPXP_demo/EAS_fourier_ls-all.bed \
 --ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \ # reference panels, Target+Auxiliary
---fix_effect_traits height_BBJ-EAS # traits to incorporate fix large genetic effect
+--fix_effect_traits height_BBJ-EAS # traits to incorporate fixed large genetic effect
 ```
 
 XPXP returns the estimated SNPs effect size in ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv
@@ -157,7 +157,7 @@ python [INSTALL PATH]/XPXP/src/XPXP.py \
 --gc_file ./XPXP_demo/gcov_height_BBJ.csv \
 --sumst_files ./XPXP_demo/height_BBJ_summary_hm3.txt,./XPXP_demo/height_UKB_summary_hm3.txt \
 --sumst_names height_BBJ-EAS+height_UKB-EUR \
---use_snps ./XPXP_demo/snps_overlap.txt \ # use the same set of SNPs
+--use_snps ./XPXP_demo/snps_overlap.txt \ # use the same set of SNPs for fairness
 --ld_block_file ./XPXP_demo/EAS_fourier_ls-all.bed \
 --ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \
 --fix_effect_traits height_BBJ-EAS
