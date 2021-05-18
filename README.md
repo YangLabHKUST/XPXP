@@ -30,13 +30,14 @@ Input files of XPXP include:
 - LD blocks file
 - summay statistics names for incorporating population-specific of phenotype specific large genetic effects
 
-The XPXP format GWAS summary statistics file has at least 5 fields:
+The XPXP format GWAS summary statistics file has at least 6 fields:
 
 - SNP: SNP rsid
 - N: sample size
 - Z: Z-scores
 - A1: effect allele
 - A2: other allele. 
+- P: p-value 
 
 
 e.g. 
@@ -49,7 +50,7 @@ rs4040617       159095  -0.37360256722158497    G       A       0.70870002366977
 ```
 
 
-The genetic covariance file is a covariance matrix with trait names as index and header:
+The genetic covariance file with trait names as index and header:
 ```bash
 $ cat ./XPXP_demo/gcov_height_BBJ.csv
 ,height_BBJ-EAS,height_Wood-EUR,height_UKB-EUR
@@ -62,14 +63,14 @@ height_UKB-EUR,0.20741027144622678,0.2525,0.369
 ## Run XPXP to compute SNPs effect size
 
 Once the input files are formatted, XPXP will automatically process the datasets, including SNPs overlapping and allele matching.
-Run XPXP with the following comand (delete "#" and comments when run it):
+Run XPXP with the following comand (**delete "#" and comments when run it**):
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
 --num_threads 40 \
 --save ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv \ # output file path 
 --gc_file ./XPXP_demo/gcov_height_BBJ.csv \ # genetic covariance file
 --sumst_files ./XPXP_demo/height_BBJ_summary_hm3.txt,./XPXP_demo/height_GIANT_summary_hm3.txt,./XPXP_demo/height_UKB_summary_hm3.txt \ # summary statistics files, Target+Auxiliary 
---sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \ # summary statistics names, the order corresponds to the file
+--sumst_names height_BBJ-EAS+height_Wood-EUR,height_UKB-EUR \ # summary statistics names, the order corresponds to the summary statistics files, population is seprated by "+", e.g., Target+Auxiliary
 --ld_block_file ./XPXP_demo/EAS_fourier_ls-all.bed \
 --ref_files ./XPXP_demo/1000G.EAS.QC.hm3.ind,./XPXP_demo/1000G.EUR.QC.hm3.ind \ # reference panels, Target+Auxiliary
 --fix_effect_traits height_BBJ-EAS # traits to incorporate fixed large genetic effect
@@ -84,7 +85,7 @@ chr     SNP     bp      A1      A2      height_BBJ-EAS-muxpxp   height_Wood-EUR-
 1       rs9442372       1018704 A       G       0.001354169642801807    0.0007882917460030307   0.0009947411386104607
 ```
 
-where A1 is the effect allele, A2 is the other allele. "\<TraitName\>-muxpxp" is the posterior means of SNPs effect size of \<TraitName\> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the posterior means computed by LDpred-inf ("\<TraitName\>-mu") using only the GWAS summary statistic of \<TraitName\>, see the exmaple below. 
+where A1 is the effect allele, A2 is the other allele. \<TraitName-muxpxp\> is the estimated SNPs effect size of \<TraitName\> computed by XPXP. If argument "--return_LDpredinf" is given, then XPXP will also output the estimated SNPs effect size computed by LDpred-inf (\<TraitName-mu\>) using the GWAS summary statistic of \<TraitName\> only, see the exmaple below. 
 
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
@@ -129,7 +130,7 @@ FID     IID     height_BBJ-EAS-muxpxp   height_Wood-EUR-muxpxp  height_UKB-EUR-m
 ```
 where column \<TraitName-muxpxp\> is the predicted PRS using the estimated SNPs effect size (\<TraitName-muxpxp\>) returned by XPXP
 
-However, the individual-level GWAS data of UKBB is availabel due to the data sharing restriction. We therefore show how to use the height GWAS of UKBB Chinese as validation dataset
+However, the individual-level GWAS data of UKBB is not availabel due to the data sharing restriction. We therefore show how to use the height GWAS of UKBB Chinese as validation dataset
 
 ## Evaluate the prediction performance using GWAS summary statistics
 
@@ -137,7 +138,7 @@ We follow [XPASS](https://github.com/YangLabHKUST/XPASS) to use the following eq
 
 <img src="https://latex.codecogs.com/svg.image?R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," title="R^2=corr(y,\hat{y})^2=\left(\frac{cov(y,\hat{y})}{\sqrt{var(y)var(\hat{y})}}\right)^2=\left(\frac{z^T\tilde{\mu}/\sqrt{n}}{\sqrt{\tilde{\mu}^T\Sigma\tilde{\mu}}}\right)^2," />
 
-where z is the z-score of external summsry statistics, n is its sample size, <img src="https://latex.codecogs.com/svg.image?\tilde{\mu}" title="\tilde{\mu}" /> is the posterior mean of effect size at the standardized genotype scale, <img src="https://latex.codecogs.com/svg.image?\Sigma" title="\Sigma" /> is the SNPs correlation matrix.
+where z is the z-score of external summsry statistics, n is its sample size, <img src="https://latex.codecogs.com/svg.image?\tilde{\mu}" title="\tilde{\mu}" /> is the posterior mean of effect size at the standardized genotype scale (mean 0 and variance 1), <img src="https://latex.codecogs.com/svg.image?\Sigma" title="\Sigma" /> is the SNPs correlation matrix computed from a reference panel.
 
 Input files:
 
@@ -155,7 +156,7 @@ $ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 Output: R2 for height_BBJ-EAS-muxpxp: 0.13039907941388484
 ```
 
-Compared to XPXP trained on the BBJ and UKB only:
+Compared to XPXP trained on the BBJ and UKBB datasets only:
 ```bash
 $ python [INSTALL PATH]/XPXP/src/XPXP.py \
 --num_threads 40 \
@@ -176,9 +177,10 @@ $ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 
 Output: R2 for height_BBJ-EAS-muxpxp: 0.1256874019449264
 ```
+The predicted R2 declined a little bit due to the removing of GIANT training data
 
 ## Generate genetic and environmental covariance matrix
-XPXP requires genetic and environmental covariance matrix estimates for computing the posterior mean of SNPs effect size. For parameters within a population (e.g., SNP-heritability for each trait, genetic covariance for each pair of traits, and environmental covariance for pair of traits with substiantial sample overlap), we apply LD score regression ([LDSC](https://github.com/bulik/ldsc)) to obtain their estimates. For parameters cross two populations (e.g., trans-ancestry genetic covariance), we follow [XPASS](https://github.com/YangLabHKUST/XPASS) to estimate the trans-ancestry genetic covariance using fully LD matrix rather than the LD information from local SNPs utilized in LDSC.
+XPXP requires genetic and environmental covariance matrix estimates for computing the posterior mean of SNPs effect size. For parameters within a population (e.g., SNP-heritability, genetic covariance, and environmental covariance for pair of traits with substiantial sample overlap), we apply LD score regression ([LDSC](https://github.com/bulik/ldsc)) to obtain their estimates. For parameters cross two populations (e.g., trans-ancestry genetic covariance), we follow [XPASS](https://github.com/YangLabHKUST/XPASS) to estimate the trans-ancestry genetic covariance using fully LD matrix rather than the LD information from local SNPs utilized in LDSC.
 
 Here we provide a helper script (```ParaEstimate.py```, a wrapper of LDSC and XPASS) to conveniently obtain the input parameters for  ```XPXP.py```. 
 First of all, we need install the LDSC v1.0.1 using conda:
@@ -187,10 +189,11 @@ git clone https://github.com/bulik/ldsc.git
 cd ldsc
 conda env create -f environment.yml
 ```
-please note that we **do not** need to activate the ldsc environment
+please note that we **do not need to activate the ldsc environment**
+
 then we run ```ParaEstimate.py``` as following:
 ```bash
-$ python /home/jxiaoae/cross-popu/xpxp/XPXP/src/ParaEstimate.py \
+$ python [INSTALL PATH]/XPXP/src/ParaEstimate.py \
 --save_dir ./XPXP_demo/params \
 --ldsc_path [LDSC PATH] \
 --ldsc_files ./XPXP_demo/eas_ldscores/,./XPXP_demo/eur_ldscores/ \
