@@ -192,7 +192,7 @@ conda env create -f environment.yml
 ```
 please note that we <ins>**do not need to activate the ldsc environment**</ins>
 
-then we run ```ParaEstimate.py``` as following:
+then we run ```ParaEstimate.py``` in ```xpxp``` environment as following:
 ```bash
 $ python [INSTALL PATH]/XPXP/src/ParaEstimate.py \
 --save_dir ./XPXP_demo/params \
