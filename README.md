@@ -189,7 +189,7 @@ git clone https://github.com/bulik/ldsc.git
 cd ldsc
 conda env create -f environment.yml
 ```
-please note that we **do not need to activate the ldsc environment**
+please note that we <ins>**do not need to activate the ldsc environment**</ins>
 
 then we run ```ParaEstimate.py``` as following:
 ```bash
