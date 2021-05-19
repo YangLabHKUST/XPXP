@@ -188,6 +188,7 @@ First of all, we need install the LDSC v1.0.1 using conda:
 git clone https://github.com/bulik/ldsc.git
 cd ldsc
 conda env create -f environment.yml
+# no need to run 'conda activate ldsc'
 ```
 please note that we <ins>**do not need to activate the ldsc environment**</ins>
 
