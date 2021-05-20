@@ -3,7 +3,7 @@ The XPXP package for improving polygenic risk score (PRS) prediction by cross-po
 
 # Installation
 ```bash
-git clone https://github.com/JiaShun-Xiao/XPXP.git
+git clone https://github.com/YangLabHKUST/XPXP.git
 cd XPXP
 conda env create -f environment.yml
 conda activate xpxp
