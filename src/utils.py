@@ -160,6 +160,26 @@ def ld_clump(df,file_ref1,p1,r2=0.1):
     return snps_clump
 
 
+def compute_fe(L_ll,L_sl,L_ss,zs,zl,h1,use_cho=True, use_cg=True):
+    S1 = L_ss[np.diag_indices_from(L_ss)]+(1-h1)/h1
+    if use_cho:
+        invS1 = linalg.cho_solve(linalg.cho_factor(S1,lower=True), np.eye(S1.shape[0]))
+    else:
+        invS1 = np.linalg.inv(S1)
+    b = zl-L_sl.T@invS1@zs
+    S2 = L_ll-L_sl.T@invS1@L_sl
+    if use_cg:
+        fe = cg(S2,b)[0]
+    else:
+        if use_cho:
+            invS2 = linalg.cho_solve(linalg.cho_factor(S2,lower=True), np.eye(S2.shape[0]))
+        else:
+            invS2 = np.linalg.inv(S2)
+        fe = invS2@b
+
+    return fe
+
+
 def ImputeZscore(p,X,zsb):
     X = X/np.sqrt(X.shape[0])
     L = X.T.dot(X)

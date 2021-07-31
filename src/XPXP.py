@@ -10,6 +10,23 @@ import sys
 import os
 from utils import * 
 
+__version__ = '1.0.1'
+SOFTWARE_CORRESPONDENCE_EMAIL1 = 'jxiaoae@connect.ust.hk'
+SOFTWARE_CORRESPONDENCE_EMAIL2 = 'mcaiad@connect.ust.hk' 
+
+HEADER = """
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+<> 
+<> XPXP: Improving polygenic prediction by cross-population and cross-phenotype analysis
+<> Version: %s
+<> MIT License
+<>
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+<> Software-related correspondence: %s or %s
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>
+        
+<><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><><>       
+""" % (__version__, SOFTWARE_CORRESPONDENCE_EMAIL1, SOFTWARE_CORRESPONDENCE_EMAIL2)
   
     
 if __name__ == '__main__':
@@ -40,6 +57,11 @@ if __name__ == '__main__':
         args.save = args.save+'.csv'
 
     logger = configure_logging('.'.join(args.save.split('.')[:-1]))
+
+    logger.info(HEADER)
+    logger.info("See full log at: %s\n", os.path.abspath('.'.join(args.save.split('.')[:-1])+'.log'))
+    logger.info("\nProgram executed via:\n%s\n", ' '.join(sys.argv).replace("--", " \\ \n\t--"))
+
     res_save_file = args.save
     corr_file = args.gc_file
     file_ref1, file_ref2 = args.ref_files.split(',')
@@ -274,11 +296,16 @@ if __name__ == '__main__':
                 if le_trait in sumst_ref1:
                     Xl1_b = ((X1[:,isle]-X1_mean[isle])/X1_sd[isle])/np.sqrt(X1.shape[1])
                     L_sl1 = X1_b.T@Xl1_b*ns[le_trait]/X1_b.shape[0]
+                    L_ss = L1*ns[le_trait]
                 else:
                     Xl1_b = ((X2[:,isle]-X2_mean[isle])/X2_sd[isle])/np.sqrt(X2.shape[1])
                     L_sl1 = X2_b.T@Xl1_b*ns[le_trait]/X2_b.shape[0]
+                    L_ss = L2*ns[le_trait]
                 L_l1 = Xl1_b.T.dot(Xl1_b)*ns[le_trait]/Xl1_b.shape[0]
-                beta_le_b = linalg.inv(L_l1) @ (np.sqrt(ns[le_trait]/p)*(sumstats_dict[le_trait]['Z'].values[isle])).reshape(-1,)
+                zl = (np.sqrt(ns[le_trait]/p)*(sumstats_dict[le_trait]['Z'].values[isle])).reshape(-1,)
+                zs = zs_b[le_trait].reshape(-1,)
+                beta_le_b = compute_fe(L_l1,L_sl1,L_ss,zs,zl,height_corr.loc[le_trait,le_trait])
+                #beta_le_b = linalg.inv(L_l1) @ (np.sqrt(ns[le_trait]/p)*(sumstats_dict[le_trait]['Z'].values[isle])).reshape(-1,)
                 beta_snps_clump[le_trait][idx_le] = beta_le_b
                 zs_b[le_trait] -= L_sl1@beta_le_b
         
