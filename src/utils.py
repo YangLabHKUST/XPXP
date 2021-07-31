@@ -161,11 +161,11 @@ def ld_clump(df,file_ref1,p1,r2=0.1):
 
 
 def compute_fe(L_ll,L_sl,L_ss,zs,zl,h1,use_cho=True, use_cg=True):
-    S1 = L_ss[np.diag_indices_from(L_ss)]+(1-h1)/h1
+    L_ss[np.diag_indices_from(L_ss)] += (1-h1)/h1
     if use_cho:
-        invS1 = linalg.cho_solve(linalg.cho_factor(S1,lower=True), np.eye(S1.shape[0]))
+        invS1 = linalg.cho_solve(linalg.cho_factor(L_ss,lower=True), np.eye(L_ss.shape[0]))
     else:
-        invS1 = np.linalg.inv(S1)
+        invS1 = np.linalg.inv(L_ss)
     b = zl-L_sl.T@invS1@zs
     S2 = L_ll-L_sl.T@invS1@L_sl
     if use_cg:
