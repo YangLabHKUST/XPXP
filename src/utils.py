@@ -153,7 +153,10 @@ def ld_clump(df,file_ref1,p1,r2=0.1):
     if res != 0:
         print('error in clumping')
         sys.exit()
-    snps_clump = pd.read_csv(ftmp_res.name+'.clumped',delim_whitespace=True)['SNP'].values
+    try:
+        snps_clump = pd.read_csv(ftmp_res.name+'.clumped',delim_whitespace=True)['SNP'].values
+    except:
+        snps_clump = np.array([])
     ftmp.close()
     ftmp_res.close()
     [os.remove(_) for _ in gb.glob(ftmp_res.name+'.*')]
