@@ -22,7 +22,10 @@ if __name__ == '__main__':
     parser.add_argument('--Z', type=str, help='Name of Z-score column', default='Z')
     parser.add_argument('--beta', type=str, help='Name of beta column', default='BETA')
     parser.add_argument('--se', type=str, help='Name of se column', default='SE')
-
+    parser.add_argument('--pval', type=str, help='Name of p-value column', default='P')
+    parser.add_argument('--chr', type=str, help='Name of CHR column', default='CHR')
+    parser.add_argument('--bp', type=str, help='Name of position column', default='BP')
+    parser.add_argument('--skipImp', action="store_true", help='skip imputaion')
     '''
     usage:
     python /home/jxiaoae/cross-popu/src/Impute_Zscore.py \
@@ -44,7 +47,7 @@ if __name__ == '__main__':
     logger.info("output path: {} ".format(save))
 
     if args.sumst_file.endswith('gz') or args.sumst_file.endswith('zip'):
-        df = pd.read_csv(args.sumst_file,compression='infer',sep='\t')
+        df = pd.read_csv(args.sumst_file,compression='infer',delim_whitespace=True)
     else:
         df = pd.read_csv(args.sumst_file,sep='\t')
     if not args.Z in df.columns:
@@ -54,8 +57,8 @@ if __name__ == '__main__':
             logger.error("Need assign N")
         logger.info("Assigned N: {}".format(args.assignN))
         df['N'] = args.assignN
-    df = df[[args.snp, args.N, args.Z, args.a1, args.a2]]
-    df.columns = ['SNP','N','Z','A1','A2']
+    df = df[[args.snp, args.chr, args.bp, args.N, args.Z, args.a1, args.a2, args.pval]]
+    df.columns = ['SNP', 'CHR', 'BP', 'N','Z','A1','A2','P']
 
     df_columns = df.columns.values.tolist()
     ref1_info = pd.read_csv(args.ref_file+'.bim',sep='\t',header=None)
@@ -92,7 +95,7 @@ if __name__ == '__main__':
     df.loc[sums_inverse,'A2'] = df_A1_store
     logger.info("SNPs need aligned for: {}".format(sums_inverse.sum()))
 
-    if not df['Z'].isnull().any():
+    if not df['Z'].isnull().any() or args.skipImp:
         logger.info('No need to impute Z-score, All Z-score exist!')
         df.to_csv(save+'.txt',sep='\t',index=None)
         sys.exit()
