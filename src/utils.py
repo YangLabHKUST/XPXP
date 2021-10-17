@@ -199,9 +199,10 @@ def ImputeZscore(p,X,zsb):
     return zsb 
 
 
-def ComputePMXPXP(bi, sums_names, sumst_ref1, ns, p, L, L2, Sigma_beta, Sigma_e, zsb, logger, use_cho=True, use_cg=True, return_LDpredinf=True):
+def ComputePMXPXP(bi, sums_names, sumst_ref1, sumst_ref2, ns, p, L, L2, L3, Sigma_beta, Sigma_e, zsb, logger, use_cho=True, use_cg=True, return_LDpredinf=True):
     pb = L.shape[0] 
     ref1_n = len(sumst_ref1)
+    ref2_n = len(sumst_ref2)
 
     # construct matrix A 
     Sigma_beta_inv = np.linalg.inv(Sigma_beta)
@@ -218,9 +219,13 @@ def ComputePMXPXP(bi, sums_names, sumst_ref1, ns, p, L, L2, Sigma_beta, Sigma_e,
         for j in range(ref1_n):
             A[i*pb:(i+1)*pb,j*pb:(j+1)*pb] = np.multiply(L,Sigma_e_inv_ns[i,j]) #Sigma_e_inv_ns[i,j]*L
     
-    for i in range(ref1_n,len(sums_names)):
-        for j in range(ref1_n,len(sums_names)):
+    for i in range(ref1_n,ref1_n+ref2_n):
+        for j in range(ref1_n,ref1_n+ref2_n):
             A[i*pb:(i+1)*pb,j*pb:(j+1)*pb] = np.multiply(L2,Sigma_e_inv_ns[i,j]) #Sigma_e_inv_ns[i,j]*L2
+
+    for i in range(ref1_n+ref2_n,len(sums_names)):
+        for j in range(ref1_n+ref2_n,len(sums_names)):
+            A[i*pb:(i+1)*pb,j*pb:(j+1)*pb] = np.multiply(L3,Sigma_e_inv_ns[i,j]) #Sigma_e_inv_ns[i,j]*L3
             
     for i in range(len(sums_names)):
         for j in range(len(sums_names)):
@@ -253,7 +258,7 @@ def ComputePMXPXP(bi, sums_names, sumst_ref1, ns, p, L, L2, Sigma_beta, Sigma_e,
             else:
                 S1invz1 = linalg.cho_solve(linalg.cho_factor(S1,lower=True), np.eye(pb)).dot(zsb[sums_n])
             mu[:,i] = np.sqrt(ns[sums_n]/p)*S1invz1
-        for i,sums_n in enumerate(sums_names[ref1_n:]):
+        for i,sums_n in enumerate(sums_names[ref1_n:ref1_n+ref2_n]):
             S1 = L2*ns[sums_n]
             h1 = Sigma_beta[i+ref1_n,i+ref1_n]
             S1[np.diag_indices_from(S1)] += (1-h1)/h1
@@ -262,10 +267,20 @@ def ComputePMXPXP(bi, sums_names, sumst_ref1, ns, p, L, L2, Sigma_beta, Sigma_e,
             else:
                 S1invz1 = linalg.cho_solve(linalg.cho_factor(S1,lower=True), np.eye(pb)).dot(zsb[sums_n])
             mu[:,i+ref1_n] = np.sqrt(ns[sums_n]/p)*S1invz1
+        for i,sums_n in enumerate(sums_names[ref1_n+ref2_n:]):
+            S1 = L3*ns[sums_n]
+            h1 = Sigma_beta[i+ref1_n+ref2_n,i+ref1_n+ref2_n]
+            S1[np.diag_indices_from(S1)] += (1-h1)/h1
+            if use_cg:
+                S1invz1 = cg(S1,zsb[sums_n])[0]
+            else:
+                S1invz1 = linalg.cho_solve(linalg.cho_factor(S1,lower=True), np.eye(pb)).dot(zsb[sums_n])
+            mu[:,i+ref1_n+ref2_n] = np.sqrt(ns[sums_n]/p)*S1invz1
     else:
         mu = np.zeros((pb,len(sums_names)))
     
     return mu, mu_xpss.reshape(len(sums_names),pb).T
+
 
 
 def PlotCorrelatin(tme_corr,tme_corr_pvalue,label,ismask=False):
