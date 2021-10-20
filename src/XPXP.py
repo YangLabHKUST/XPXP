@@ -43,6 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('--num_threads', type=str, help='number of threads', default="22")
     parser.add_argument('--fix_effect_traits', type=str, help='traits to incorporate fix large genetic effect, seperated by comma',required=False)
     parser.add_argument('--pvalue', type=float, help='p-value threshold for fix effect', default=1e-6)
+    parser.add_argument('--alpha', type=float, help='selection-related parameter: [2f(1 −f)]^α', default=-0.25)
 
 
     args = parser.parse_args()
@@ -392,23 +393,23 @@ if __name__ == '__main__':
         beta_estimate_mu[idx_i,:], beta_estimate_muxpxp[idx_i,:] = ComputePMXPXP(i, sumst_names, \
                 sumst_ref1, sumst_ref2, ns, p, L1, L2, L3, Sigma_beta, Sigma_e, zs_b, logger, return_LDpredinf=args.return_LDpredinf)
 
-    beta_estimate_mu[:,:len(sumst_ref1)] = (beta_estimate_mu[:,:len(sumst_ref1)]/np.sqrt(p))/X1_sd.reshape(-1,1)
-    beta_estimate_mu[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)] = (beta_estimate_mu[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)]/np.sqrt(p))/X2_sd.reshape(-1,1)
-    beta_estimate_mu[:,len(sumst_ref1+sumst_ref2):] = (beta_estimate_mu[:,len(sumst_ref1+sumst_ref2):]/np.sqrt(p))/X3_sd.reshape(-1,1)
+    beta_estimate_mu[:,:len(sumst_ref1)] = (beta_estimate_mu[:,:len(sumst_ref1)]*X1_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
+    beta_estimate_mu[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)] = (beta_estimate_mu[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)]*X2_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
+    beta_estimate_mu[:,len(sumst_ref1+sumst_ref2):] = (beta_estimate_mu[:,len(sumst_ref1+sumst_ref2):]*X3_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
 
-    beta_estimate_muxpxp[:,:len(sumst_ref1)] = (beta_estimate_muxpxp[:,:len(sumst_ref1)]/np.sqrt(p))/X1_sd.reshape(-1,1)
-    beta_estimate_muxpxp[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)] = (beta_estimate_muxpxp[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)]/np.sqrt(p))/X2_sd.reshape(-1,1)
-    beta_estimate_muxpxp[:,len(sumst_ref1+sumst_ref2):] = (beta_estimate_muxpxp[:,len(sumst_ref1+sumst_ref2):]/np.sqrt(p))/X3_sd.reshape(-1,1)
+    beta_estimate_muxpxp[:,:len(sumst_ref1)] = (beta_estimate_muxpxp[:,:len(sumst_ref1)]*X1_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
+    beta_estimate_muxpxp[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)] = (beta_estimate_muxpxp[:,len(sumst_ref1):len(sumst_ref1+sumst_ref2)]*X2_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
+    beta_estimate_muxpxp[:,len(sumst_ref1+sumst_ref2):] = (beta_estimate_muxpxp[:,len(sumst_ref1+sumst_ref2):]*X3_sd.reshape(-1,1)**args.alpha)/np.sqrt(p)
     
     if args.fix_effect_traits is not None:
         beta_estimate_fixeffect = ref1_info[['chr','SNP','bp','A1','A2']]
         for le_trait in le_traits:
             if le_trait in sumst_ref1:
-                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]/np.sqrt(p)/X1_sd[idx_snps_clump[le_trait]]
+                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]*X1_sd[idx_snps_clump[le_trait]]**args.alpha/np.sqrt(p)
             elif le_trait in sumst_ref2:
-                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]/np.sqrt(p)/X2_sd[idx_snps_clump[le_trait]]
+                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]*X2_sd[idx_snps_clump[le_trait]]**args.alpha/np.sqrt(p)
             else:
-                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]/np.sqrt(p)/X3_sd[idx_snps_clump[le_trait]]
+                beta_snps_clump[le_trait] = beta_snps_clump[le_trait]*X3_sd[idx_snps_clump[le_trait]]**args.alpha/np.sqrt(p)
             beta_estimate_fixeffect.loc[idx_snps_clump[le_trait],le_trait] = beta_snps_clump[le_trait]
             le_trait_idx = sumst_names.index(le_trait)
             beta_estimate_muxpxp[idx_snps_clump[le_trait],le_trait_idx] = beta_estimate_muxpxp[idx_snps_clump[le_trait],le_trait_idx]+beta_snps_clump[le_trait]
