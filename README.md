@@ -153,7 +153,7 @@ $ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 --beta ./XPXP_demo/PM_height_BBJ-GIANT-UKB.csv  \
 --col_name height_BBJ-EAS-muxpxp
 
-Output: R2 for height_BBJ-EAS-muxpxp: 0.1284308427682418
+Output: R2 for height_BBJ-EAS-muxpxp: 0.12507274818467157
 ```
 
 Compared to XPXP trained on the BBJ and UKBB datasets only:
@@ -175,7 +175,7 @@ $ python [INSTALL PATH]/XPXP/src/PredictSS.py \
 --beta ./XPXP_demo/PM_height_BBJ-UKB.csv  \
 --col_name height_BBJ-EAS-muxpxp
 
-Output: R2 for height_BBJ-EAS-muxpxp: 0.1256874019449264
+Output: R2 for height_BBJ-EAS-muxpxp: 0.11977208502842795
 ```
 The predicted R2 declined a little bit due to the removing of GIANT training data
 

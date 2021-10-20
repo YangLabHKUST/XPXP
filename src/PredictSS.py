@@ -52,7 +52,7 @@ if __name__ == '__main__':
     beta_inverse = (ref1_info['A1'].values != df_pm['A1'].values)
     df_pm.loc[beta_inverse,args.col_name] = -df_pm.loc[beta_inverse,args.col_name] 
 
-    beta1 = df_pm[args.col_name].values
+    beta1 = df_pm[args.col_name].values*X1_sd
     denominator = 0
     for i in range(ngroup):
         idx_i = ref1_info.loc[ref1_info['block']==i,].index.values
