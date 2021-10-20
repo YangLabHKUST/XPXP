@@ -19,12 +19,11 @@ if __name__ == '__main__':
     test_gwas_file = args.sumst_file
     ref1_info = pd.read_csv(file_ref1+'.bim',sep='\t',header=None)
     ref1_info.columns = ['chr','SNP','cm','bp','A1','A2']
-    df_gwas = pd.read_csv(test_gwas_file,sep='\t')
-    df_gwas = df_gwas.drop_duplicates('SNP') 
-    df_pm = pd.read_csv(args.beta,sep='\t')
+    df_gwas = pd.read_csv(test_gwas_file,sep='\t').dropna().drop_duplicates('SNP') 
+    df_pm = pd.read_csv(args.beta,sep='\t').dropna().drop_duplicates('SNP') 
 
-    snp_common = np.intersect1d(df_pm['SNP'].values,df_gwas['SNP'].values)
-    print('Overlapping SNPs number: {}'.format(snp_common.shape[0]))
+    snp_common = list(set(df_pm['SNP'].values)&set(df_gwas['SNP'].values)&set(ref1_info['SNP'].values))
+    print('Overlapping SNPs number: {}'.format(len(snp_common)))
     df_gwas = df_gwas.loc[df_gwas['SNP'].isin(snp_common)]
     df_gwas = df_gwas.reset_index()
     df_pm = df_pm.loc[df_pm['SNP'].isin(snp_common)]
@@ -48,9 +47,12 @@ if __name__ == '__main__':
     sums_inverse = (ref1_info['A1'].values != df_gwas['A1'].values)
     df_gwas.loc[sums_inverse,'Z'] = -df_gwas.loc[sums_inverse,'Z'] 
     n_test = df_gwas['N'].median()
-    zs = copy.deepcopy(df_gwas['Z'].values)  
+    zs = copy.deepcopy(df_gwas['Z'].values) 
+    
+    beta_inverse = (ref1_info['A1'].values != df_pm['A1'].values)
+    df_pm.loc[beta_inverse,args.col_name] = -df_pm.loc[beta_inverse,args.col_name] 
 
-    beta1 = df_pm[args.col_name].values*X1_sd
+    beta1 = df_pm[args.col_name].values
     denominator = 0
     for i in range(ngroup):
         idx_i = ref1_info.loc[ref1_info['block']==i,].index.values
