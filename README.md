@@ -242,15 +242,12 @@ height_Wood-EUR,0.0,0.7289,0.08950000000000002
 height_UKB-EUR,0.0,0.08950000000000002,0.631
 ```
 
-
-# Development
-
-The XPXP package is developed by Jiashun Xiao (jxiaoae@connect.ust.hk).
-
 # Contact information
 
 Please contact Jiashun Xiao (jxiaoae@connect.ust.hk), Mingxuan Cai (mcaiad@ust.hk) or Prof. Can Yang (macyang@ust.hk) if any enquiry.
 
+## Reference
+Xiao, J., Cai, M., Hu, X., Wan, X., Chen, G., & Yang, C. (2022). XPXP: Improving polygenic prediction by cross-population and cross-phenotype analysis. Bioinformatics.
 
 
 
